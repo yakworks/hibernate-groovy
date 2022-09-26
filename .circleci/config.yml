@@ -48,7 +48,7 @@ commands:
     steps:
       - save_cache:
           paths: [
-            ".gradle", ".build-cache", "./hibernate-groovy-bytebuddy/build", "./hibernate-groovy-db/build"
+            ".gradle", ".build-cache", "./hibernate-groovy-proxy/build", "./hibernate-groovy-db/build"
           ]
           key: build-{{ .Branch }}-{{ checksum "day-version-cache-key.tmp" }}
 

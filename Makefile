@@ -88,7 +88,7 @@ endif
 
 ## shows dependencies
 gradle.dependencies:
-	./gradlew hibernate-groovy-bytebuddy:dependencies --configuration compileClasspath
+	./gradlew hibernate-groovy-proxy:dependencies --configuration compileClasspath
 	./gradlew examples:spring-jpa-java:dependencies --configuration compileClasspath
 
 # for testing circle image. set up .env or export both GITHUB_TOKEN and the base64 enocded GPG_KEY from lastpass.

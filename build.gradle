@@ -1,16 +1,17 @@
 plugins {
-  id "org.jetbrains.kotlin.jvm" version "$kotlinVersion" apply false
+  // id "org.jetbrains.kotlin.jvm" version "$kotlinVersion" apply false
   id "yakworks.shipyak" version "$vShipyak"
   id "yakworks.groovy-lib" version "$vShipyak" apply false
   id "io.github.gradle-nexus.publish-plugin" version "$vMavenNexus"
+  id "com.github.spotbugs" version "5.0.12"
 }
 
 apply from: "${rootProject.projectDir}/gradle/publish.gradle"
 
-// codenarc setup in build.yml and shipyak, this is how to do overrides.
+// codenarc setup in build.yml with shipyak, this is how to do overrides to disable whats on by default
 ext.codenarcRuleset= '''
   // getRule('Println').enabled = false
-  // getRule('AbcMetric').enabled = false
   getRule('FieldName').enabled = false
-  getRule('SynchronizedMethod').enabled = false
+  getRule('UnnecessaryDotClass').enabled = false
+  getRule('AssignmentToStaticFieldFromInstanceMethod').enabled = false
 '''

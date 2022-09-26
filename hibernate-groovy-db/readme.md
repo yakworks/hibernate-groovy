@@ -1,6 +1,6 @@
 misc helpers for hibernate, all require groovy.
 
-## hibernate-groovy-bytebuddy
+## hibernate-groovy-proxy
 
 includes the dependency.
 

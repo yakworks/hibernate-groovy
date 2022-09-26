@@ -28,21 +28,30 @@ import org.hibernate.service.spi.ServiceRegistryImplementor
 @CompileStatic
 class GroovyProxyFactoryServiceContributor implements ServiceContributor {
     private static final long serialVersionUID = 1L
+    protected static boolean replaceToString = true
+    protected static boolean isEnabled = true
+
 
     @Override
     void contribute(StandardServiceRegistryBuilder serviceRegistryBuilder) {
+        String isEnabledVal = serviceRegistryBuilder.settings['hibernate.groovy.proxy.enabled']
+        String tostringVal = serviceRegistryBuilder.settings['hibernate.groovy.proxy.replace_to_string']
+        isEnabled = toBoolean(isEnabledVal)
+        replaceToString = toBoolean(tostringVal)
+
         //only register if its not javassist (assumes its bytebuddy)
-        if(serviceRegistryBuilder.settings['hibernate.bytecode.provider'] != 'javassist') {
+        if(isEnabled) {
             serviceRegistryBuilder.addInitiator(GroovyProxyFactoryFactoryInitiator.INSTANCE)
         }
     }
 
+    static toBoolean(String val, boolean defaultVal = true){
+        return (val == null) ? defaultVal : val.toBoolean()
+    }
+
     @CompileStatic // so we can get to the privates on the provider to reuse them
     static class GroovyProxyFactoryFactoryInitiator implements StandardServiceInitiator<ProxyFactoryFactory> {
-
-        /**
-         * Singleton access
-         */
+        /** Singleton access, why? */
         public static final StandardServiceInitiator<ProxyFactoryFactory> INSTANCE = new GroovyProxyFactoryFactoryInitiator();
 
         @Override
@@ -83,7 +92,7 @@ class GroovyProxyFactoryServiceContributor implements ServiceContributor {
 
         @Override
         public ProxyFactory buildProxyFactory(SessionFactoryImplementor sessionFactory) {
-            return new ByteBuddyGroovyProxyFactory( byteBuddyProxyHelper );
+            return new ByteBuddyGroovyProxyFactory( byteBuddyProxyHelper, replaceToString );
         }
     }
 }

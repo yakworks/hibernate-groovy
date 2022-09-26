@@ -32,4 +32,10 @@ class Customer {
         this.name = name
     }
 
+    //this will only get used if its not a proxy by default
+    // if hibernate.groovy.proxy.replace_to_string=false then it will init the proxy and use this as normal
+    @Override
+    String toString() {
+        return String.format( "Customer[id=%d, name='%s']", id, name);
+    }
 }

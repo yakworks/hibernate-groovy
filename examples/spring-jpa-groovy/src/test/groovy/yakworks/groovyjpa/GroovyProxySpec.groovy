@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package yakworks.bootjpa
+package yakworks.groovyjpa
 
 
 import org.hibernate.Hibernate
@@ -24,27 +24,40 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager
 
 import spock.lang.Specification
+import yakworks.groovyjpa.Customer
+import yakworks.groovyjpa.CustomerRepository
 
 @DataJpaTest
-class ProxySpec extends Specification {
+class GroovyProxySpec extends Specification {
 
     @Autowired TestEntityManager testEntityManager
     // @Autowired EntityManagerFactory entityManagerFactory
     @Autowired CustomerRepository customerRepo
 
-    void "java entity test"() {
+    void "groovy entity test"() {
         when:
-        Customer customer = new Customer("first", "last");
+        Customer customer = new Customer(1, "Tesla");
         testEntityManager.persist(customer);
 
         Session session = testEntityManager.entityManager.unwrap(Session.class);
+        // session.flush()
+        session.clear()
         Customer proxy = session.load(Customer, 1L)
 
         then:
         session
+        //without ByteBuddyGroovyInterceptor this would normally cause the proxy to init
         proxy
+        proxy.metaClass
+        proxy.getMetaClass()
         !Hibernate.isInitialized(proxy)
-        proxy.toString() //this would normally hydrate the proxy without
+        //id calls
+        proxy.id == 1
+        proxy.getId() == 1
+        proxy["id"] == 1
+        !Hibernate.isInitialized(proxy)
+        //this would also normally cause the proxy to hydrate
+        proxy.toString() == "Customer : 1 (proxy)"
         !Hibernate.isInitialized(proxy)
     }
 }

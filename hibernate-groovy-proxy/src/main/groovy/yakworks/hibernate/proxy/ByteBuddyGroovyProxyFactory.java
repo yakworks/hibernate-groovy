@@ -18,7 +18,7 @@ import org.hibernate.type.CompositeType;
 import static org.hibernate.internal.CoreLogging.messageLogger;
 
 /**
- * Replaces the stock ByteBuddyProxyFactory instead of overrides since everything is private and not easy extend.
+ * Replaces the stock ByteBuddyProxyFactory instead of overriding since everything is private and not easy extend.
  * A copy paste of original with slight modifications for class construction. Make it easier to extend too for others to modify
  */
 public class ByteBuddyGroovyProxyFactory implements ProxyFactory, Serializable  {
@@ -35,11 +35,13 @@ public class ByteBuddyGroovyProxyFactory implements ProxyFactory, Serializable  
     protected CompositeType componentIdType;
     protected boolean overridesEquals;
     protected boolean overridesToString;
+    protected boolean replaceToString;
 
     protected Class proxyClass;
 
-    public ByteBuddyGroovyProxyFactory(ByteBuddyProxyHelper byteBuddyProxyHelper) {
+    public ByteBuddyGroovyProxyFactory(ByteBuddyProxyHelper byteBuddyProxyHelper, boolean replaceToString) {
         this.byteBuddyProxyHelper = byteBuddyProxyHelper;
+        this.replaceToString = replaceToString;
     }
 
     @Override
@@ -95,7 +97,7 @@ public class ByteBuddyGroovyProxyFactory implements ProxyFactory, Serializable  
     Interceptor buildInterceptor(Serializable id, SharedSessionContractImplementor session){
         final ByteBuddyGroovyInterceptor interceptor = new ByteBuddyGroovyInterceptor(
             entityName, persistentClass, interfaces, id, getIdentifierMethod, setIdentifierMethod, componentIdType, session,
-            overridesEquals, overridesToString
+            overridesEquals, overridesToString, replaceToString
         );
         return interceptor;
     }
