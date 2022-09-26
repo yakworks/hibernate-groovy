@@ -1,0 +1,36 @@
+buildscript {
+    repositories {
+        maven { url "https://repo.grails.org/grails/core" }
+    }
+    dependencies {
+        classpath "org.grails:grails-gradle-plugin:$grailsGradlePluginVersion"
+    }
+}
+apply plugin:"idea"
+apply plugin:"war"
+apply plugin:"org.grails.grails-web"
+
+dependencies {
+    implementation project(":hibernate-groovy-bytebuddy")
+
+    implementation "org.springframework.boot:spring-boot-starter-logging"
+    implementation "org.springframework.boot:spring-boot-starter-validation"
+    implementation "org.springframework.boot:spring-boot-autoconfigure"
+    implementation "org.grails:grails-core"
+    implementation "org.grails:grails-web-boot"
+
+    implementation "org.grails.plugins:async"
+
+    implementation "org.grails.plugins:hibernate5"
+    implementation "org.hibernate:hibernate-core:5.6.9.Final"
+
+    runtimeOnly "com.h2database:h2"
+    runtimeOnly "org.apache.tomcat:tomcat-jdbc"
+
+    testImplementation "org.grails:grails-gorm-testing-support"
+
+}
+
+tasks.withType(Test) {
+    useJUnitPlatform()
+}
