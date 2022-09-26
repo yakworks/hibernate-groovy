@@ -13,6 +13,7 @@ include 'hibernate-groovy-bytebuddy'
 // tests will be included in main runs but not deploy tasks and doc tasks
 include "examples:spring-jpa-java"
 include "examples:spring-jpa-groovy"
+include "examples:grails-gorm"
 // findProject(':examples/spring-jpa-java').name = 'example-spring-jpa-java'
 
 buildCache {
