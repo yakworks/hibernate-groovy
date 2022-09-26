@@ -1,0 +1,43 @@
+// repository and compile and config settings.
+
+repositories {
+  mavenLocal()
+  mavenCentral()
+  maven { url "https://repo.grails.org/grails/core" }
+  maven {
+    url "http://repo.9ci.com/oss-snapshots"
+    allowInsecureProtocol = true
+    mavenContent {
+      snapshotsOnly()
+    }
+  }
+}
+
+plugins.withId('java') {
+  sourceCompatibility = "$javaCompatibility"
+  targetCompatibility = "$javaCompatibility"
+  tasks.withType(JavaCompile) {
+    options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation"
+  }
+
+  configurations {
+    //includes the compileOnly in tests too so we don't have to list twice
+    testImplementation.extendsFrom compileOnly
+    all {
+      resolutionStrategy.cacheChangingModulesFor 60, 'seconds' //when changing = true this sets the cache time
+    }
+  }
+
+}
+
+plugins.withId('groovy') {
+  tasks.withType(GroovyCompile) {
+    // options.debug = true
+    configure(groovyOptions) {
+      // verbose = true
+      // sets the path to sys properties so we can use it find grails-app/conf during AST
+      forkOptions.jvmArgs = ['-Xmx1524m', '-Dproject.projectDir=' + project.projectDir.absolutePath]
+      // '--illegal-access=permit', '--add-opens=java.base/java.lang.reflect=ALL-UNNAMED']
+    }
+  }
+}

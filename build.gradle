@@ -1,0 +1,16 @@
+plugins {
+  id "org.jetbrains.kotlin.jvm" version "$kotlinVersion" apply false
+  id "yakworks.shipyak" version "$vShipyak"
+  id "yakworks.groovy-lib" version "$vShipyak" apply false
+  id "io.github.gradle-nexus.publish-plugin" version "$vMavenNexus"
+}
+
+apply from: "${rootProject.projectDir}/gradle/publish.gradle"
+
+// codenarc setup in build.yml and shipyak, this is how to do overrides.
+ext.codenarcRuleset= '''
+  // getRule('Println').enabled = false
+  // getRule('AbcMetric').enabled = false
+  getRule('FieldName').enabled = false
+  getRule('SynchronizedMethod').enabled = false
+'''

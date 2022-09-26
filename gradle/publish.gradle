@@ -1,0 +1,47 @@
+
+// Maven Sonatype publishing using the gradle-nexus.publish-plugin
+//Meant to be be applied at the root level
+//Will look for isPublishable in the gradle.properties of each sub-project.
+
+if(!isSnapshot) {
+  nexusPublishing {
+    repositories {
+      sonatype()
+    }
+  }
+}
+
+subprojects { subprj ->
+  // get prop with default if null, converts to boolean
+  Closure getProp = { pname, defualtv -> (subprj.findProperty(pname) ?: defualtv).toBoolean() }
+
+  ext { // see gradle.properties in sub-projects
+    //second arg is default
+    isPublishable = getProp('isPublishable', false)
+    isExample = getProp('isExample', false)
+  }
+
+  // if its a lib then setup gpg signing, see signing.gnupg.keyName
+  if (isPublishable){
+    // makes is a publishable lib
+    apply plugin: 'java-library'
+    // gpg signing required by nexus/sonatype
+    apply plugin: 'signing'
+
+    afterEvaluate {
+      if(!isSnapshot) {
+        signing {
+          required { gradle.taskGraph.hasTask("publish") }
+          useGpgCmd()
+          sign publishing.publications.javaLibrary
+        }
+      }
+    }
+    // this turns off the plain suffix as in xxx-plain.jar that appeared in spring boot 2.5
+    // https://docs.spring.io/spring-boot/docs/current/gradle-plugin/reference/htmlsingle/#packaging-executable.and-plain-archives
+    tasks.named("jar") {
+      archiveClassifier = ''
+    }
+  }
+}
+

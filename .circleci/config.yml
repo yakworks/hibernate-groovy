@@ -1,0 +1,105 @@
+# circleCI build file
+version: 2.1
+
+executors:
+  builder-large:  # 4cpus 8gb ram
+    resource_class: 'large'
+    environment:
+      GRADLE_OPTS: "-Dorg.gradle.caching=true -Dorg.gradle.daemon=false -Dorg.gradle.workers.max=4 -Dorg.gradle.console=plain"
+    docker:
+      - image: yakworks/builder:jdk11
+  builder-medium: # 2cpus 4gb ram
+    resource_class: 'medium'
+    environment:
+      GRADLE_OPTS: "-Dorg.gradle.caching=true -Dorg.gradle.daemon=false -Dorg.gradle.workers.max=2 -Dorg.gradle.console=plain"
+    docker:
+      - image: yakworks/builder:jdk11
+
+commands:
+  restore_gradle_cache:
+    description: "Common pattern for gradle cache"
+    steps:
+      - run: make gradle.cache-key-file
+      - restore_cache:
+          key: gradle-{{ checksum "cache-key.tmp" }}
+      - restore_cache:
+          key: gradlew-75-{{ checksum "gradlew" }}
+
+  restore_build_cache:
+    description: "combine version.props and day, to have cache per day"
+    steps:
+      # combines version.props with today to use as the key
+      - run: make circle.day-version-cache-key-file
+      - restore_cache:
+          key: build-{{ .Branch }}-{{ checksum "day-version-cache-key.tmp" }}
+
+  save_gradle_cache:
+    description: "saves gradle caches"
+    steps:
+      - save_cache:
+          paths: ["~/.gradle/wrapper"]
+          key: gradlew-75-{{ checksum "gradlew" }}
+      - save_cache:
+          paths: [ "~/.gradle/caches" ]
+          key: gradle-{{ checksum "cache-key.tmp" }}
+
+  save_build_cache:
+    description: "saves build cache"
+    steps:
+      - save_cache:
+          paths: [
+            ".gradle", ".build-cache", "./hibernate-groovy-bytebuddy/build", "./hibernate-groovy-db/build"
+          ]
+          key: build-{{ .Branch }}-{{ checksum "day-version-cache-key.tmp" }}
+
+  save_workspace:
+    description: "saves workspace"
+    steps:
+      - persist_to_workspace:
+          root: .
+          paths: [ ".gradle", ".build-cache", "*/build" ]
+
+# ---------------------------------------------------------------------------
+jobs:
+  build:
+    executor: builder-medium
+    steps:
+      - checkout
+      - restore_gradle_cache
+      - restore_build_cache
+
+      - run:
+          name: ✔︎ -- Check
+          command: make check
+
+      - save_gradle_cache
+      - save_workspace
+      - save_build_cache
+
+  ship-it:
+    executor: builder-large
+    steps:
+      - checkout
+      - restore_gradle_cache
+      - attach_workspace:
+          at: .
+
+      # download vault and decrypts
+      - run: make vault.decrypt
+      # sets up git config, kubectl and docker login
+      - run: make ship.authorize
+      # publish libs, push docker, kubernetes deploy
+      - run: make ship.release
+      # add to changelog, creates a release to github, rolls version.props and pushes changes to github
+      # only happens if IS_RELEASABLE, meaning if its a snapshot then it skips this
+      - run: make ship.version
+
+workflows:
+  build-flow:
+    jobs:
+      - build:
+          context: bot-context #context with shared ENV vars
+      - ship-it:
+          context: bot-context
+          requires: [build]
+          filters: { branches: { only: [ master, /release\/.*/, dev ] } }

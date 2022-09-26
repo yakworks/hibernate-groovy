@@ -1,0 +1,70 @@
+// --- dependency and logging for tests ---
+
+dependencies {
+  testImplementation "org.slf4j:slf4j-simple:${vSlf4j}"
+
+  testImplementation("org.spockframework:spock-core:${vSpock}") {
+    exclude module: "groovy-all"
+  }
+
+  testImplementation "org.springframework:spring-web:5.3.19"
+  testImplementation "org.springframework:spring-test:5.3.19"
+
+  testImplementation 'org.junit.jupiter:junit-jupiter-params:5.8.1'
+  testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
+  testImplementation 'org.hamcrest:hamcrest:2.2'
+  testImplementation('org.hobsoft.hamcrest:hamcrest-compose:0.4.0'){
+    exclude group:"org.hamcrest", module: "hamcrest-core"
+  }
+
+  // jupiter-api and junit-vintage-engine allows both spock and junit tests to be run
+  testImplementation "org.junit.jupiter:junit-jupiter-api:5.8.1"
+  testRuntimeOnly "org.junit.vintage:junit-vintage-engine:5.8.1"
+}
+
+tasks.withType(Test) {
+  useJUnitPlatform()
+  //so that we can use in config and share resources/rootlocation across projects for testing
+  systemProperty "project.rootProjectDir", rootProject.projectDir.absolutePath
+  systemProperty "project.projectDir", project.projectDir.absolutePath
+  //hides the noise for 'illegal reflective access operation has occurred'
+  jvmArgs("--illegal-access=permit")
+  jvmArgs("--add-opens", "java.base/java.lang.reflect=ALL-UNNAMED")
+  jvmArgs("--add-opens", "java.base/sun.nio.ch=ALL-UNNAMED")
+  // options.forkOptions.jvmArgs += ['--add-opens', 'java.base/java.lang=ALL-UNNAMED']
+}
+
+test {
+  // Defaults from https://github.com/radarsh/gradle-test-logger-plugin
+  testlogger {
+    logLevel 'quiet'
+    // theme 'standard'
+    showExceptions true
+    showStandardStreams = true //shows the printlns in console
+    showPassed false
+    showSkipped true
+    showFailed true
+    // slowThreshold 2000 //if tests take longer than this will show time it took
+    showSummary true
+    // showSimpleNames false
+    // showPassed true
+    // showSkipped true
+    // showFailed true
+    // showPassedStandardStreams true
+    // showSkippedStandardStreams true
+    // showFailedStandardStreams true
+  }
+}
+
+//deal with log4j shit
+dependencies {
+  constraints {
+    implementation("org.apache.logging.log4j:log4j-core") {
+      version {
+        strictly("[2.17, 3[")
+        prefer("2.17.0")
+      }
+      because("CVE-2021-44228, CVE-2021-45046, CVE-2021-45105: Log4j vulnerable to remote code execution and other critical security vulnerabilities")
+    }
+  }
+}

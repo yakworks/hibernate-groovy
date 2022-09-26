@@ -1,0 +1,51 @@
+# used in the yakworks.shipyak gradle plugin as well as the makefile shipkit
+# see defaults options https://github.com/yakworks/gradle-plugins/tree/master/src/main/resources/configs/defaults.yml
+title: Hibernate Groovy Support
+description: Hibernate with Groovy
+author: Yak.Works
+group: org.yakworks
+
+project:
+  fullName: yakworks/hibernate-groovy
+  # list of subproject dirs used to spin through, build the checksum and consolidate the test reports for circle
+  # also used for the make circle.day-version-cache-key-file
+  subprojects: hibernate-groovy-bytebuddy hibernate-groovy-db
+
+bot:
+  email: 9cibot@9ci.com
+  sign_commits: true
+
+vault:
+  repo: 9ci/vault
+
+release:
+  # after release, will set version.properties back to releasable=false
+  reset_flag: true
+  # changelog: CHANGELOG.md
+
+# publish:
+#   branch_regex: master|dev|release/.+
+
+team:
+  developers: ['basejump: Joshua Burnett']
+
+maven:
+  # published to maven and this one too.
+  repoUrl: http://repo.9ci.com/public-libs
+  snapshotUrl: http://repo.9ci.com/oss-snapshots
+
+spotless:
+  enabled: true
+  # default license header file to use
+  licenseHeader: |
+    ${'/*\n' +
+    '* Copyright \$YEAR original authors\n' +
+    '* SPDX-License-Identifier: Apache-2.0\n' +
+    '*/'
+    }
+
+#codenarc:
+#  toolVersion: 2.2.0
+#  main:
+#    excludes: ['**/BootStrap.*', '**/UrlMappings.*']
+

@@ -1,0 +1,16 @@
+apply plugin: "yakworks.groovy-lib"
+
+apply from: "${rootProject.projectDir}/gradle/compile.gradle"
+apply from: "${rootProject.projectDir}/gradle/test-unit.gradle"
+
+dependencies {
+
+  implementation "org.codehaus.groovy:groovy:$groovyVersion"
+
+  implementation "org.hibernate:hibernate-core:$vHibernate"
+
+}
+
+test {
+  useJUnitPlatform()
+}

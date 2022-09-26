@@ -1,0 +1,23 @@
+pluginManagement {
+    repositories {
+        mavenLocal()
+        gradlePluginPortal()
+    }
+}
+rootProject.name = 'hibernate-groovy-root'
+
+//the releasable plugins
+include 'hibernate-groovy-db'
+include 'hibernate-groovy-bytebuddy'
+
+// tests will be included in main runs but not deploy tasks and doc tasks
+include "examples:spring-jpa-java"
+include "examples:spring-jpa-groovy"
+// findProject(':examples/spring-jpa-java').name = 'example-spring-jpa-java'
+
+buildCache {
+  local {
+    directory = new File('.', '.build-cache')
+    removeUnusedEntriesAfterDays = 10
+  }
+}
