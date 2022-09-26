@@ -11,7 +11,7 @@ apply plugin:"war"
 apply plugin:"org.grails.grails-web"
 
 dependencies {
-    implementation project(":hibernate-groovy-bytebuddy")
+    implementation project(":hibernate-groovy-proxy")
 
     implementation "org.springframework.boot:spring-boot-starter-logging"
     implementation "org.springframework.boot:spring-boot-starter-validation"

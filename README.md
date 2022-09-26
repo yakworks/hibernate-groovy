@@ -28,15 +28,16 @@
 </pre>
 </td></tr></table>
 
-## hibernate-groovy-bytebuddy
+## hibernate-groovy-proxy
 
-Gradle : `implementation "org.yakworks:hibernate-groovy-bytebuddy:0.1"`
+Gradle : `implementation "org.yakworks:hibernate-groovy-proxy:0.1"`
 
 The problem is that the ByteBuddyInterceptor is not aware of groovy getMetaClass.
 So a truthy check on the hibernate object or id check when called from dynamic groovy code will result in the interceptor initializing the code.
 
 - overrides the `ByteBuddyInterceptor` to check for the getMetaClass call. 
-- intercepts the `toString` if it has not been overriden so it doesn't hydrate the proxy. 
+- intercepts the `toString` so it doesn't hydrate the proxy. so when its a proxy will always show something like `Customer: 1 (proxy)`
+  where the class is the simple name, followed by id and a proxy indicator in parens. 
 
 Normally the following would fail the `!Hibernate.isInialized` calls but with this plugin it will work
 
@@ -61,12 +62,23 @@ proxy.toString() == "Customer : 1 (proxy)"
 !Hibernate.isInitialized(proxy)
 ```
 
+### hibernate-groovy-proxy config
+
+can set properties in the `hibernate.properties` or if using Spring or Grails in the application.(yml|properties).
+
+- `hibernate.groovy.proxy.enabled` : (default: true) Completely disables the ByteBuddyGroovyInterceptor.
+- `hibernate.groovy.proxy.replace_to_string`: (default: true) Always replace the toString when its a proxy
+
+NOTE: When using Spring JPA the hibernate settings are under the prefix `spring.jpa.properties`.
+so for example in the application.properties set `spring.jpa.properties.hibernate.groovy.proxy.replace_to_string=false`
+to turn off the interceptors toString replacement. 
+
 ## hibernate-groovy-db
 
 Gradle : `implementation "org.yakworks:hibernate-groovy-db:<<version>>"`
 
 misc helpers for hibernate, all require groovy. 
-includes the dependency for hibernate-groovy-bytebuddy
+includes the dependency for hibernate-groovy-proxy
 
 ### yakworks.hibernate.h2.ExtendedH2Dialect
 

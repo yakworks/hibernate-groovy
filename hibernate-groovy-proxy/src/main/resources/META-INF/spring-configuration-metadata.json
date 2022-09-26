@@ -1,0 +1,16 @@
+{
+  "properties": [
+    {
+      "name": "spring.jpa.properties.hibernate.groovy.proxy.enabled",
+      "description": "Disables the ByteBuddyGroovyInterceptor",
+      "type": "java.lang.Boolean",
+      "defaultValue": true
+    },
+    {
+      "name": "spring.jpa.properties.hibernate.groovy.proxy.replace_to_string",
+      "description": "Always uses a toString method that shows '<Class> : id (proxy)'. An overriden toString will only be used when its not a proxy",
+      "type": "java.lang.Boolean",
+      "defaultValue": true
+    }
+  ]
+}

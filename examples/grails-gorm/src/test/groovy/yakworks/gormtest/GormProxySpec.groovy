@@ -5,9 +5,9 @@ import org.hibernate.Hibernate
 import grails.test.hibernate.HibernateSpec
 
 /**
- * Tests Proxy with hibernate-groovy-bytebuddy
+ * Tests Proxy with hibernate-groovy-proxy
  */
-class ProxySpec extends HibernateSpec {
+class GormProxySpec extends HibernateSpec {
 
     void "Test Proxy"() {
         when:

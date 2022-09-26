@@ -8,7 +8,7 @@ rootProject.name = 'hibernate-groovy-root'
 
 //the releasable plugins
 include 'hibernate-groovy-db'
-include 'hibernate-groovy-bytebuddy'
+include 'hibernate-groovy-proxy'
 
 // tests will be included in main runs but not deploy tasks and doc tasks
 include "examples:spring-jpa-java"

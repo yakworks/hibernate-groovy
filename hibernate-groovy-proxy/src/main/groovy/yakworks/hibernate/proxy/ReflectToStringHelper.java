@@ -75,10 +75,10 @@ public final class ReflectToStringHelper {
 		try {
 			hashCode = extractToStringMethod( clazz );
 		}
-		catch ( NoSuchMethodException nsme ) {
+		catch (NoSuchMethodException nsme) {
 			return false; //its an interface so we can't really tell anything...
 		}
-		return !OBJECT_TOSTRING.equals( hashCode );
+		return !OBJECT_TOSTRING.equals(hashCode);
 	}
 
 }

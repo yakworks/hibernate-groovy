@@ -16,25 +16,24 @@
 
 package yakworks.groovyjpa
 
-
 import org.hibernate.Hibernate
 import org.hibernate.Session
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager
+import org.springframework.test.context.ActiveProfiles
 
 import spock.lang.Specification
-import yakworks.groovyjpa.Customer
-import yakworks.groovyjpa.CustomerRepository
 
 @DataJpaTest
-class ProxySpec extends Specification {
+@ActiveProfiles("disableToStringProfile")
+class GroovyDisableToStringProxySpec extends Specification {
 
     @Autowired TestEntityManager testEntityManager
     // @Autowired EntityManagerFactory entityManagerFactory
     @Autowired CustomerRepository customerRepo
 
-    void "java entity test"() {
+    void "groovy entity test"() {
         when:
         Customer customer = new Customer(1, "Tesla");
         testEntityManager.persist(customer);
@@ -45,19 +44,7 @@ class ProxySpec extends Specification {
         Customer proxy = session.load(Customer, 1L)
 
         then:
-        session
-        //without ByteBuddyGroovyInterceptor this would normally cause the proxy to init
-        proxy
-        proxy.metaClass
-        proxy.getMetaClass()
-        !Hibernate.isInitialized(proxy)
-        //id calls
-        proxy.id == 1
-        proxy.getId() == 1
-        proxy["id"] == 1
-        !Hibernate.isInitialized(proxy)
-        //this would also normally cause the proxy to hydrate
-        proxy.toString() == "Customer : 1 (proxy)"
-        !Hibernate.isInitialized(proxy)
+        proxy.toString()
+        Hibernate.isInitialized(proxy)
     }
 }

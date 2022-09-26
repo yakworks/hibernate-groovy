@@ -1,0 +1,13 @@
+
+---
+spring:
+  config:
+    activate:
+      on-profile: disableToStringProfile
+
+  jpa:
+    properties:
+      hibernate:
+        groovy:
+          proxy:
+            replace_to_string: false

@@ -9,7 +9,7 @@ project:
   fullName: yakworks/hibernate-groovy
   # list of subproject dirs used to spin through, build the checksum and consolidate the test reports for circle
   # also used for the make circle.day-version-cache-key-file
-  subprojects: hibernate-groovy-bytebuddy hibernate-groovy-db
+  subprojects: hibernate-groovy-proxy hibernate-groovy-db
 
 bot:
   email: 9cibot@9ci.com
