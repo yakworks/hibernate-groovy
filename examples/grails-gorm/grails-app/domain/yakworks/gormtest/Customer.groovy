@@ -9,6 +9,8 @@ class Customer implements Serializable {
 
     String name
 
+    Customer() {}
+
     Customer(Long id, String name) {
         this.id = id
         this.name = name

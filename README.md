@@ -73,6 +73,9 @@ NOTE: When using Spring JPA the hibernate settings are under the prefix `spring.
 so for example in the application.properties set `spring.jpa.properties.hibernate.groovy.proxy.replace_to_string=false`
 to turn off the interceptors toString replacement. 
 
+no dependencies are included for hibernate or jpa, assumed your project includes them already. 
+
+
 ## hibernate-groovy-db
 
 Gradle : `implementation "org.yakworks:hibernate-groovy-db:<<version>>"`
@@ -87,6 +90,8 @@ registers columns types (used for json types)
 - Types.OTHER -> "json"
 - Types.VARBINARY -> "BLOB"
 
+no dependencies are included for H2, assumes you have added them to your project
+
 ### yakworks.hibernate.schema.SimpleSchemaManagementTool
 
 Filters out the foreign key generation when db is created. Used to make it easier in testing H2
@@ -97,7 +102,7 @@ set `hibernate.schema_management_tool: 'yakworks.hibernate.schema.SimpleSchemaMa
 make its easier to set the JsonType in Gorm mapping blocks. 
 you will need to add the appropriate dependency to your project along with the . 
 see https://github.com/vladmihalcea/hibernate-types
-
+if using json will also need to include the jackson libs. 
 
 ## Developer Notes
 
